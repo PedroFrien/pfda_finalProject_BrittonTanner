@@ -22,16 +22,16 @@ I will need to learn more about arrays and lists. I will also need to refresh my
 
 ## Outcomes
 
-# Ideal Outcome - My ideal outcome is a simple connect 4 game that is represented with simple visuals(and perhaps even a falling animation when you place a disc) where a player can either take turns with another player on the same device or play against a simple AI opponent. 
+### Ideal Outcome - My ideal outcome is a simple connect 4 game that is represented with simple visuals(and perhaps even a falling animation when you place a disc) where a player can either take turns with another player on the same device or play against a simple AI opponent. 
 
-# Minimal Viable Outcome - The minimum viable outcome of this project would be a connect 4 game where you would take turns against another player, but in a text-based environment instead of through pygame visuals and without an AI opponent. 
+### Minimal Viable Outcome - The minimum viable outcome of this project would be a connect 4 game where you would take turns against another player, but in a text-based environment instead of through pygame visuals and without an AI opponent. 
 
 ## Milestones
 
-# Week 1 - GitHub file set up
+### Week 1 - GitHub file set up
 
-# Week 2 - Game Functionality Created
+### Week 2 - Game Functionality Created
 
-# Week 3 - Visuals Added
+### Week 3 - Visuals Added
 
-# Week 4 - Simple AI opponent created
+### Week 4 - Simple AI opponent created
