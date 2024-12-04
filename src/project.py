@@ -67,10 +67,8 @@ def create_board():
 def drop_piece(board, row, col, piece):
     board[row][col] = piece
 
-    # Calculate the target position for the piece
     targetPosition = (int(col*SQUARESIZE + SQUARESIZE/2), height-int(row*SQUARESIZE+SQUARESIZE/2))
 
-    # Create a new falling piece and add it to the list
     new_piece = FallingPiece(screen, col, piece, SQUARESIZE, targetPosition)
     falling_pieces.append(new_piece)
 
@@ -258,9 +256,7 @@ def ending_anim(current_player, is_win=True):
         # Change color based on the winning player
         text_color = RED if current_player == 1 else YELLOW
         text = font.render(f"Player {current_player} Wins!", True, text_color)
-    else:
-        # For a draw, use a neutral color
-        text_color = (128, 128, 128)  # Gray
+    else: 
         text = font.render("It's a Draw...", True, GREY)
 
     text_rect = text.get_rect(center=(width/2, height/2))
