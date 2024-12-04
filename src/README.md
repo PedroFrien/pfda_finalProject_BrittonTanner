@@ -36,6 +36,7 @@ I quickly realized that pygame is very limiting and also very confusing, and so 
 to for this project, I am still happy with the result, and it still makes me happy just how much I have learned from this course in a relatively short amount of time. 
 
 ## **VIDEO URL**
+https://youtu.be/ZeQJBLeUiVg
 
 ## **GITHUB LINK**
 
