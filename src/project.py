@@ -68,7 +68,11 @@ def winning_move(board, piece):
 
    
 
+SQUARESIZE = 100
 
+width = COLUMN_COUNT * SQUARESIZE
+height = (ROW_COUNT+1) * SQUARESIZE
+size = (width, height)
 
 def main():
 
@@ -80,55 +84,63 @@ def main():
 
     pygame.init()
 
-    SQUARESIZE = 100
+    # SQUARESIZE = 100
 
-    width = COLUMN_COUNT * SQUARESIZE
-    height = (ROW_COUNT+1) * SQUARESIZE
-    size = (width, height)
+    # width = COLUMN_COUNT * SQUARESIZE
+    # height = (ROW_COUNT+1) * SQUARESIZE
+    # size = (width, height)
 
     screen = pygame.display.set_mode(size)
     draw_board(screen, SQUARESIZE, board)
     pygame.display.update()
+    
     while not game_over:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
             
             if event.type == pygame.MOUSEBUTTONDOWN:
-                # Determine current player based on turn
+
                 current_player = turn % 2 + 1
                 
-                # Get the column clicked
+
                 posx = event.pos[0]
                 col = int(math.floor(posx / SQUARESIZE))
-                
-                # Only allow the current player to place a piece
+
                 if is_valid_location(board, col):
                     row = get_next_open_row(board, col)
                     drop_piece(board, row, col, current_player)
                     
-                    # Check for winning move
                     if winning_move(board, current_player):
                         print(f"Congratulations Player {current_player}!")
                         game_over = True
                     
-                    # Increment turn AFTER placing the piece
                     turn += 1
                     
-                    # Print the board after each move
                     print_board(board)
                     draw_board(screen, SQUARESIZE, board)
 
 def draw_board(screen, SQUARESIZE, board):
+    # Background
     for c in range(COLUMN_COUNT):
         for r in range(ROW_COUNT):
             pygame.draw.rect(screen, BLUE, (c * SQUARESIZE, r * SQUARESIZE + SQUARESIZE, SQUARESIZE, SQUARESIZE))  
-            if board[r][c] == 0:
-                pygame.draw.circle(screen, BLACK, (int(c*SQUARESIZE + SQUARESIZE/2), int(r*SQUARESIZE+SQUARESIZE+SQUARESIZE/2)),int(SQUARESIZE/2 - 5))
-            elif board[r][c] == 1:
-                pygame.draw.circle(screen, RED, (int(c*SQUARESIZE + SQUARESIZE/2), int(r*SQUARESIZE+SQUARESIZE+SQUARESIZE/2)),int(SQUARESIZE/2 - 5))
+    
+    # Player Pieces
+    for c in range(COLUMN_COUNT):
+        for r in range(ROW_COUNT):
+            if board[r][c] == 1:
+                pygame.draw.circle(screen, RED, (int(c*SQUARESIZE + SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)),int(SQUARESIZE/2 - 5))
             elif board[r][c] == 2:
-                pygame.draw.circle(screen, YELLOW, (int(c*SQUARESIZE + SQUARESIZE/2), int(r*SQUARESIZE+SQUARESIZE+SQUARESIZE/2)),int(SQUARESIZE/2 - 5))
+                pygame.draw.circle(screen, YELLOW, (int(c*SQUARESIZE + SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)),int(SQUARESIZE/2 - 5))
+    
+    # Holes
+    for c in range(COLUMN_COUNT):
+        for r in range(ROW_COUNT):
+            if board[r][c] == 0:
+                pygame.draw.circle(screen, BLACK, (int(c*SQUARESIZE + SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)),int(SQUARESIZE/2 - 5))
+
+    pygame.display.update()
 
 
 if __name__ == "__main__":
