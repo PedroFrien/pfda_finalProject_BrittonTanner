@@ -4,8 +4,6 @@ import sys
 import random
 import pygame.font
 
-
-
 ROW_COUNT = 6
 COLUMN_COUNT = 7
 
@@ -14,9 +12,7 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 GREEN = (0, 255, 0)
-
-# PLAYER1_PIECE = "🔵"
-# PLAYER2_PIECE = "🔴"
+GREY = (125, 125, 125)
 
 falling_pieces = []
 
@@ -54,24 +50,17 @@ class FallingPiece:
                 self.y = self.final_y
                 self.is_complete = True
                 check_for_win(board, self.piece_type)
-                
-                
 
     def draw(self):
         self.surface.fill((0, 0, 0, 0))
         pygame.draw.circle(self.surface, self.color, (self.squaresize // 2, self.squaresize // 2), int(self.squaresize / 2 - 5))
-    # Blit the surface onto the screen at the correct position
         self.screen.blit(self.surface, (self.x - self.squaresize // 2, self.y - self.squaresize // 2))
-        # pygame.display.update()
 
     def fall(self):
         self.surface.fill((0,0,0,0))
-        self.y += 0.5
-        
+        self.y += 0.7
 
 def create_board():
- 
-
     board = [[0 for i in range(COLUMN_COUNT)] for j in range(ROW_COUNT)]
     return board
 
@@ -86,59 +75,61 @@ def drop_piece(board, row, col, piece):
     falling_pieces.append(new_piece)
 
 def is_valid_location(board, col):
-
     return board[ROW_COUNT - 1][col] == 0
 
 def get_next_open_row(board, col):
-
     for r in range(ROW_COUNT):
         if board[r][col] == 0:
             return r
     return None  
 
 def print_board(board):
- 
     for row in board[::-1]:
         print(row)
 
-
-    
+def is_board_full(board):
+    """Check if the board is completely filled with no empty spaces."""
+    for col in range(COLUMN_COUNT):
+        if board[ROW_COUNT - 1][col] == 0:
+            return False
+    return True
 
 def check_for_win(board, current_player):
     if winning_move(board, current_player):
         print(f"Congratulations Player {current_player}!")
-        ending_anim(current_player)
-
+        ending_anim(current_player, is_win=True)
+    elif is_board_full(board):
+        print("It's a Draw!")
+        ending_anim(current_player, is_win=False)
 
 def winning_move(board, piece):
-        # Horizontal
-        for c in range(COLUMN_COUNT - 3):
-            for r in range(ROW_COUNT):
-                if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
-                    return True
-                
-        # Vertical
-        for c in range(COLUMN_COUNT):
-            for r in range(ROW_COUNT - 3):
-                if board[r][c] == piece and board[r+1][c] == piece and board [r+2][c] == piece and board[r+3][c] == piece:
-                    return True
-                
-        # Diagonal (Bottom Left to Top Right)
-        for c in range(COLUMN_COUNT - 3):
-            for r in range(ROW_COUNT - 3):
-                if board[r][c] == piece and board[r+1][c+1] == piece and board [r+2][c+2] == piece and board[r+3][c+3] == piece:
-                    return True
+    # Horizontal
+    for c in range(COLUMN_COUNT - 3):
+        for r in range(ROW_COUNT):
+            if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
+                return True
+            
+    # Vertical
+    for c in range(COLUMN_COUNT):
+        for r in range(ROW_COUNT - 3):
+            if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
+                return True
+            
+    # Diagonal (Bottom Left to Top Right)
+    for c in range(COLUMN_COUNT - 3):
+        for r in range(ROW_COUNT - 3):
+            if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
+                return True
 
-        # Diagonal (Top Left to Bottom Right)
-        for c in range(COLUMN_COUNT - 3):
-            for r in range(3, ROW_COUNT):
-                if board[r][c] == piece and board[r-1][c+1] == piece and board [r-2][c+2] == piece and board[r-3][c+3] == piece:
-                    return True
-
-   
+    # Diagonal (Top Left to Bottom Right)
+    for c in range(COLUMN_COUNT - 3):
+        for r in range(3, ROW_COUNT):
+            if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
+                return True
+    
+    return False
 
 SQUARESIZE = 100
-
 game_over = False
 width = COLUMN_COUNT * SQUARESIZE
 height = (ROW_COUNT+1) * SQUARESIZE
@@ -146,54 +137,25 @@ size = (width, height)
 
 screen = pygame.display.set_mode(size)
 board = create_board()
-def main():
-    
-    
 
+def main():
     current_player = 1
     posx = 1
     print_board(board)
-
-    
     turn = 0
 
     pygame.init()
-
-    # SQUARESIZE = 100
-
-    # width = COLUMN_COUNT * SQUARESIZE
-    # height = (ROW_COUNT+1) * SQUARESIZE
-    # size = (width, height)
-
-
     draw_board(screen, SQUARESIZE, board, posx, current_player)
     pygame.display.update()
-
-    
-    
     
     while not game_over:
-
-        
-        
-        
         draw_board(screen, SQUARESIZE, board, posx, current_player)
 
         for piece in falling_pieces:
             piece.update()
             piece.draw()
 
-        
-
-        # Update falling pieces
         falling_pieces[:] = [piece for piece in falling_pieces]
-
-        
-       
-        
-        
-         
-        
         
         pygame.display.update()
 
@@ -203,15 +165,9 @@ def main():
             
             if event.type == pygame.MOUSEMOTION: 
                 posx = event.pos[0]
-                 
-
-                
                 pygame.display.update()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                
-                
-
                 posx = event.pos[0]
                 col = int(math.floor(posx / SQUARESIZE))
 
@@ -219,59 +175,52 @@ def main():
                     row = get_next_open_row(board, col)
                     drop_piece(board, row, col, current_player)
                     
-                    
-                    
                     turn += 1
                     current_player = turn % 2 + 1
                     print_board(board)
                     draw_board(screen, SQUARESIZE, board, posx, current_player)
 
-
 def draw_board(screen, SQUARESIZE, board, posx, current_player):
-
     pygame.draw.rect(screen, BLACK, (0, 0, width, SQUARESIZE))
     if current_player == 1:
         pygame.draw.circle(screen, RED, (int(posx), int(SQUARESIZE/2)),int(SQUARESIZE/2 - 5))
     else:
         pygame.draw.circle(screen, YELLOW, (int(posx), int(SQUARESIZE/2)),int(SQUARESIZE/2 - 5))
+    
     # Background
     for c in range(COLUMN_COUNT):
         for r in range(ROW_COUNT):
             pygame.draw.rect(screen, BLUE, (c * SQUARESIZE, r * SQUARESIZE + SQUARESIZE, SQUARESIZE, SQUARESIZE))  
     
-    # # Player Pieces
-    # for c in range(COLUMN_COUNT):
-    #     for r in range(ROW_COUNT):
-    #         if board[r][c] == 1:
-    #             pygame.draw.circle(screen, RED, (int(c*SQUARESIZE + SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)),int(SQUARESIZE/2 - 5))
-    #         elif board[r][c] == 2:
-    #             pygame.draw.circle(screen, YELLOW, (int(c*SQUARESIZE + SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)),int(SQUARESIZE/2 - 5))
-    
-
-    
     # Holes
     for c in range(COLUMN_COUNT):
         for r in range(ROW_COUNT):
-            # if board[r][c] == 0:
             pygame.draw.circle(screen, BLACK, (int(c*SQUARESIZE + SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)),int(SQUARESIZE/2 - 5))
 
     for piece in falling_pieces:
-            piece.draw()
-
+        piece.draw()
     
     pygame.display.update()
     
-def ending_anim(current_player):
-
+def ending_anim(current_player, is_win=True):
     game_over = True
+    pygame.draw.rect(screen, BLACK, (0, 0, width, SQUARESIZE))
 
     pygame.time.wait(1000)
 
-    for piece in falling_pieces:
-        piece.color = GREEN
-        piece.draw()  # Redraw just this piece
-        pygame.display.update()  # Update the display for this specific piece
-        pygame.time.wait(200)
+    if is_win:
+        for piece in falling_pieces:
+            piece.color = GREEN
+            piece.draw()
+            pygame.display.update()
+            pygame.time.wait(200)
+
+    if not is_win:
+        for piece in falling_pieces:
+            piece.color = GREY
+            piece.draw()
+            pygame.display.update()
+            pygame.time.wait(200)
 
     pygame.time.wait(1500)
 
@@ -280,14 +229,11 @@ def ending_anim(current_player):
             for r in range(ROW_COUNT):
                 pygame.draw.rect(screen, BLUE, (c * SQUARESIZE, r * SQUARESIZE + SQUARESIZE, SQUARESIZE, SQUARESIZE)) 
 
-        
         for c in range(COLUMN_COUNT):
             for r in range(ROW_COUNT):
                 pygame.draw.circle(screen, BLACK, (int(c*SQUARESIZE + SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)),int(SQUARESIZE/2 - 5))
 
-        
         for piece in falling_pieces:
-
             piece.fall()
             piece.draw()
             pygame.display.update()
@@ -303,30 +249,26 @@ def ending_anim(current_player):
         pygame.display.update()
         pygame.time.delay(50)
 
-    if current_player == 1:
-        text_color = RED
-    else:
-        text_color = YELLOW
-
     pygame.font.init()
     font = pygame.font.Font(None, 100)
     for idx, piece in enumerate(falling_pieces):
-            del falling_pieces[idx]
-    text = font.render(f"Player {current_player} Wins!", True, text_color)
+        del falling_pieces[idx]
+
+    if is_win:
+        # Change color based on the winning player
+        text_color = RED if current_player == 1 else YELLOW
+        text = font.render(f"Player {current_player} Wins!", True, text_color)
+    else:
+        # For a draw, use a neutral color
+        text_color = (128, 128, 128)  # Gray
+        text = font.render("It's a Draw...", True, GREY)
 
     text_rect = text.get_rect(center=(width/2, height/2))
-
     screen.blit(text, text_rect)
     pygame.display.update()
 
     pygame.time.wait(3000)
-    
-
-    
-
     sys.exit()
-
-
 
 if __name__ == "__main__":
     main()
