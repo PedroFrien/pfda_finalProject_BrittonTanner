@@ -22,7 +22,7 @@ While this project was mostly comprised of concepts I had learned before in this
 Similarly to our checkerboard lab, I used two lists in order to create a grid pattern that I used for the game functionality. This was difficult for a number of reasons.
 First, I had to have the program place the piece at the bottom of its respective column, and then it had to check if that piece had made any 4-in-a-row matches.
 That prospect was very daunting, but after searching around through some forums online I found a pretty neat solution. Just checking if a piece and the 3 pieces to the right of it are the same works wonders
-if you do that check on nearly every peace. I was able to keep it constrained as much as possible, though, leaving out cases where it's impossible for that match to occur
+if you do that check on nearly every piece. I was able to keep it constrained as much as possible, though, leaving out cases where it's impossible for that match to occur
 (like a piece thats already on the far right wall.) This same concept could then be used for vertical matches and both the diagonals.
 After the game functionality was created, I then had to make the visuals for it. This proved to be tricky since I was a little rusty on pygame and all of its ins and outs, but I eventually figured out
 some solutions to give the game visuals and some basic animations.
@@ -36,7 +36,8 @@ I quickly realized that pygame is very limiting and also very confusing, and so 
 to for this project, I am still happy with the result, and it still makes me happy just how much I have learned from this course in a relatively short amount of time. 
 
 ## **VIDEO URL**
+https://youtu.be/ZeQJBLeUiVg
 
 ## **GITHUB LINK**
-
+https://github.com/PedroFrien/pfda_finalProject_BrittonTanner.git
 
