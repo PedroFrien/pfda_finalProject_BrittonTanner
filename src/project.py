@@ -137,6 +137,7 @@ screen = pygame.display.set_mode(size)
 board = create_board()
 
 def main():
+    pygame.display.set_caption("Connect 4")
     current_player = 1
     posx = 1
     print_board(board)
@@ -212,6 +213,7 @@ def ending_anim(current_player, is_win=True):
             piece.draw()
             pygame.display.update()
             pygame.time.wait(200)
+            pygame.display.set_caption(f"Player {current_player} Wins!")
 
     if not is_win:
         for piece in falling_pieces:
@@ -219,6 +221,7 @@ def ending_anim(current_player, is_win=True):
             piece.draw()
             pygame.display.update()
             pygame.time.wait(200)
+            pygame.display.set_caption("Draw...")
 
     pygame.time.wait(1500)
 
