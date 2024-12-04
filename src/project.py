@@ -2,6 +2,8 @@ import pygame
 import math
 import sys
 import random
+import pygame.font
+
 
 
 ROW_COUNT = 6
@@ -11,6 +13,7 @@ BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
+GREEN = (0, 255, 0)
 
 # PLAYER1_PIECE = "🔵"
 # PLAYER2_PIECE = "🔴"
@@ -50,6 +53,9 @@ class FallingPiece:
             if self.y >= self.final_y:
                 self.y = self.final_y
                 self.is_complete = True
+                check_for_win(board, self.piece_type)
+                
+                
 
     def draw(self):
         self.surface.fill((0, 0, 0, 0))
@@ -57,6 +63,10 @@ class FallingPiece:
     # Blit the surface onto the screen at the correct position
         self.screen.blit(self.surface, (self.x - self.squaresize // 2, self.y - self.squaresize // 2))
         # pygame.display.update()
+
+    def fall(self):
+        self.surface.fill((0,0,0,0))
+        self.y += 0.5
         
 
 def create_board():
@@ -91,6 +101,15 @@ def print_board(board):
     for row in board[::-1]:
         print(row)
 
+
+    
+
+def check_for_win(board, current_player):
+    if winning_move(board, current_player):
+        print(f"Congratulations Player {current_player}!")
+        ending_anim(current_player)
+
+
 def winning_move(board, piece):
         # Horizontal
         for c in range(COLUMN_COUNT - 3):
@@ -120,22 +139,22 @@ def winning_move(board, piece):
 
 SQUARESIZE = 100
 
+game_over = False
 width = COLUMN_COUNT * SQUARESIZE
 height = (ROW_COUNT+1) * SQUARESIZE
 size = (width, height)
 
 screen = pygame.display.set_mode(size)
-
+board = create_board()
 def main():
     
-
+    
 
     current_player = 1
     posx = 1
-    board = create_board()
     print_board(board)
 
-    game_over = False
+    
     turn = 0
 
     pygame.init()
@@ -200,14 +219,13 @@ def main():
                     row = get_next_open_row(board, col)
                     drop_piece(board, row, col, current_player)
                     
-                    if winning_move(board, current_player):
-                        print(f"Congratulations Player {current_player}!")
-                        game_over = True
+                    
                     
                     turn += 1
                     current_player = turn % 2 + 1
                     print_board(board)
                     draw_board(screen, SQUARESIZE, board, posx, current_player)
+
 
 def draw_board(screen, SQUARESIZE, board, posx, current_player):
 
@@ -242,6 +260,72 @@ def draw_board(screen, SQUARESIZE, board, posx, current_player):
 
     
     pygame.display.update()
+    
+def ending_anim(current_player):
+
+    game_over = True
+
+    pygame.time.wait(1000)
+
+    for piece in falling_pieces:
+        piece.color = GREEN
+        piece.draw()  # Redraw just this piece
+        pygame.display.update()  # Update the display for this specific piece
+        pygame.time.wait(200)
+
+    pygame.time.wait(1500)
+
+    for i in range(1000):
+        for c in range(COLUMN_COUNT):
+            for r in range(ROW_COUNT):
+                pygame.draw.rect(screen, BLUE, (c * SQUARESIZE, r * SQUARESIZE + SQUARESIZE, SQUARESIZE, SQUARESIZE)) 
+
+        
+        for c in range(COLUMN_COUNT):
+            for r in range(ROW_COUNT):
+                pygame.draw.circle(screen, BLACK, (int(c*SQUARESIZE + SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)),int(SQUARESIZE/2 - 5))
+
+        
+        for piece in falling_pieces:
+
+            piece.fall()
+            piece.draw()
+            pygame.display.update()
+    
+    pygame.time.wait(1000)
+
+    for alpha in range(0, 256, 10):
+        screen.fill(BLACK)
+        s = pygame.Surface((width, height))  
+        s.set_alpha(alpha)                   
+        s.fill((0,0,0))                      
+        screen.blit(s, (0,0))                
+        pygame.display.update()
+        pygame.time.delay(50)
+
+    if current_player == 1:
+        text_color = RED
+    else:
+        text_color = YELLOW
+
+    pygame.font.init()
+    font = pygame.font.Font(None, 100)
+    for idx, piece in enumerate(falling_pieces):
+            del falling_pieces[idx]
+    text = font.render(f"Player {current_player} Wins!", True, text_color)
+
+    text_rect = text.get_rect(center=(width/2, height/2))
+
+    screen.blit(text, text_rect)
+    pygame.display.update()
+
+    pygame.time.wait(3000)
+    
+
+    
+
+    sys.exit()
+
 
 
 if __name__ == "__main__":
