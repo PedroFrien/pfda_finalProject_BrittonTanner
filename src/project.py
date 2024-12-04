@@ -1,10 +1,16 @@
 import pygame
 import math
+import sys
 
 
 
 ROW_COUNT = 6
 COLUMN_COUNT = 7
+
+BLUE = (0, 0, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+YELLOW = (255, 255, 0)
 
 # PLAYER1_PIECE = "🔵"
 # PLAYER2_PIECE = "🔴"
@@ -57,52 +63,73 @@ def winning_move(board, piece):
         # Diagonal (Top Left to Bottom Right)
         for c in range(COLUMN_COUNT - 3):
             for r in range(3, ROW_COUNT):
-                if board[r][c] == piece and board[r-1][c] == piece and board [r-2][c] == piece and board[r-3][c] == piece:
+                if board[r][c] == piece and board[r-1][c+1] == piece and board [r-2][c+2] == piece and board[r-3][c+3] == piece:
                     return True
 
-                
+   
+
 
 
 def main():
 
     board = create_board()
     print_board(board)
-    
+
     game_over = False
     turn = 0
 
+    pygame.init()
+
+    SQUARESIZE = 100
+
+    width = COLUMN_COUNT * SQUARESIZE
+    height = (ROW_COUNT+1) * SQUARESIZE
+    size = (width, height)
+
+    screen = pygame.display.set_mode(size)
+    draw_board(screen, SQUARESIZE, board)
+    pygame.display.update()
     while not game_over:
-
-        current_player = turn % 2 + 1
-        
-        while True:
-            try:
-                col = (int(input(f"Player {current_player} Selection (1-7): ")) - 1)
-                if 0 <= col <= 6:
-                    break
-                else:
-                    print("Invalid input. Please enter a number between 1 and 7.")
-            except ValueError:
-                print("Invalid input. Please enter a number from 1 to 7.")
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
             
-        
-        if 0 <= col < COLUMN_COUNT and is_valid_location(board, col):
-            row = get_next_open_row(board, col)
-            if current_player == 1:
-                drop_piece(board, row, col, current_player)
-            if current_player == 2:
-                drop_piece(board, row, col, current_player)
-            
-            print_board(board)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # Determine current player based on turn
+                current_player = turn % 2 + 1
+                
+                # Get the column clicked
+                posx = event.pos[0]
+                col = int(math.floor(posx / SQUARESIZE))
+                
+                # Only allow the current player to place a piece
+                if is_valid_location(board, col):
+                    row = get_next_open_row(board, col)
+                    drop_piece(board, row, col, current_player)
+                    
+                    # Check for winning move
+                    if winning_move(board, current_player):
+                        print(f"Congratulations Player {current_player}!")
+                        game_over = True
+                    
+                    # Increment turn AFTER placing the piece
+                    turn += 1
+                    
+                    # Print the board after each move
+                    print_board(board)
+                    draw_board(screen, SQUARESIZE, board)
 
-            if winning_move(board, current_player):
-                print(f"Congratulations to Player {current_player}!")
-                game_over = True
+def draw_board(screen, SQUARESIZE, board):
+    for c in range(COLUMN_COUNT):
+        for r in range(ROW_COUNT):
+            pygame.draw.rect(screen, BLUE, (c * SQUARESIZE, r * SQUARESIZE + SQUARESIZE, SQUARESIZE, SQUARESIZE))  
+            if board[r][c] == 0:
+                pygame.draw.circle(screen, BLACK, (int(c*SQUARESIZE + SQUARESIZE/2), int(r*SQUARESIZE+SQUARESIZE+SQUARESIZE/2)),int(SQUARESIZE/2 - 5))
+            elif board[r][c] == 1:
+                pygame.draw.circle(screen, RED, (int(c*SQUARESIZE + SQUARESIZE/2), int(r*SQUARESIZE+SQUARESIZE+SQUARESIZE/2)),int(SQUARESIZE/2 - 5))
+            elif board[r][c] == 2:
+                pygame.draw.circle(screen, YELLOW, (int(c*SQUARESIZE + SQUARESIZE/2), int(r*SQUARESIZE+SQUARESIZE+SQUARESIZE/2)),int(SQUARESIZE/2 - 5))
 
-            turn += 1
-            
-        else:
-            print("Invalid move. Try again.")
 
 if __name__ == "__main__":
     main()
